@@ -13,7 +13,8 @@ function parseArgs(array $argv): array
         'by' => 'source',
         'sort' => 'visits',
         'order' => 'desc',
-        'limit' => null
+        'limit' => null,
+        'page' => null
     ];
     
     $i = 1;
@@ -28,6 +29,8 @@ function parseArgs(array $argv): array
             $result['order'] = $argv[++$i];
         } elseif (in_array($arg, ['--limit', '-l']) && isset($argv[$i + 1])) {
             $result['limit'] = (int)$argv[++$i];
+        } elseif (in_array($arg, ['--page', '-p']) && isset($argv[$i + 1])) {
+            $result['page'] = $argv[++$i];
         } elseif (!str_starts_with($arg, '-') && strlen($arg) === 10 && strpos($arg, '-') !== false) {
             if (!$result['dateFrom'] || $result['dateFrom'] === date('Y-m-d', strtotime('-30 days'))) {
                 $result['dateFrom'] = $arg;
@@ -86,11 +89,11 @@ $client = new MetrikaClient(
     $config['counter_id']
 );
 
-function getTrafficData(MetrikaClient $client, string $dateFrom, string $dateTo, string $dimension, string $sortField, string $order): array
+function getTrafficData(MetrikaClient $client, string $dateFrom, string $dateTo, string $dimension, string $sortField, string $order, ?string $pageFilter = null): array
 {
     $prefix = $order === 'asc' ? '' : '-';
     
-    $data = $client->request([
+    $params = [
         'ids' => $client->getCounterId(),
         'metrics' => 'ym:s:visits,ym:s:users,ym:s:pageviews,ym:s:bounceRate,ym:s:pageDepth,ym:s:avgVisitDurationSeconds',
         'dimensions' => $dimension,
@@ -98,7 +101,13 @@ function getTrafficData(MetrikaClient $client, string $dateFrom, string $dateTo,
         'date2' => $dateTo,
         'limit' => 1000,
         'sort' => $prefix . $sortField
-    ]);
+    ];
+    
+    if ($pageFilter) {
+        $params['filters'] = "ym:s:startURL=@'$pageFilter'";
+    }
+    
+    $data = $client->request($params);
     
     $result = [];
     foreach ($data['data'] ?? [] as $item) {
@@ -117,7 +126,7 @@ function getTrafficData(MetrikaClient $client, string $dateFrom, string $dateTo,
 }
 
 $dimension = getDimension($args['by']);
-$traffic = getTrafficData($client, $args['dateFrom'], $args['dateTo'], $dimension, getSortField($args['sort']), $args['order']);
+$traffic = getTrafficData($client, $args['dateFrom'], $args['dateTo'], $dimension, getSortField($args['sort']), $args['order'], $args['page']);
 
 if ($args['limit'] !== null && $args['limit'] > 0) {
     $traffic = array_slice($traffic, 0, $args['limit']);
@@ -127,18 +136,25 @@ $reportPath = MetrikaClient::createReportDir();
 $timestamp = MetrikaClient::getFileTimestamp();
 
 $label = getDimensionLabel($args['by']);
+$title = "Источники трафика по {$label}";
+if ($args['page']) {
+    $title .= " (страница: {$args['page']})";
+}
 
 echo "\n  Папка отчета: metrika_reports/" . basename($reportPath) . "\n";
 echo "  Период: {$args['dateFrom']} — {$args['dateTo']}\n";
 echo "  Группировка: {$label}\n";
 echo "  Сортировка: {$args['sort']} ({$args['order']})\n";
+if ($args['page']) {
+    echo "  Фильтр по странице: {$args['page']}\n";
+}
 if ($args['limit'] !== null) {
     echo "  Лимит: топ {$args['limit']}\n";
 }
 echo "\n";
 
 MetrikaClient::saveCsv($traffic, "$reportPath/traffic_$timestamp.csv");
-MetrikaClient::saveMarkdown($traffic, "$reportPath/traffic_$timestamp.md", "Источники трафика по {$label}", $args['dateFrom'], $args['dateTo']);
+MetrikaClient::saveMarkdown($traffic, "$reportPath/traffic_$timestamp.md", $title, $args['dateFrom'], $args['dateTo']);
 
 echo "  Создано файлов:\n";
 echo "    - traffic_$timestamp.csv\n";
