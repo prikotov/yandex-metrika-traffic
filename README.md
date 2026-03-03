@@ -51,7 +51,20 @@ php .opencode/skills/yandex-metrika-traffic/traffic.php --by social_network -l 1
 
 # Реферальные домены
 php .opencode/skills/yandex-metrika-traffic/traffic.php -b referral_domain
+
+# Источники для конкретной страницы
+php .opencode/skills/yandex-metrika-traffic/traffic.php -p "blog/rag-s-nulya"
 ```
+
+### Параметры
+
+| Параметр | Сокращение | Описание | Пример |
+|----------|------------|----------|--------|
+| `--by` | `-b` | Группировка | `-b search_engine` |
+| `--sort` | `-s` | Поле сортировки | `-s bounce_rate` |
+| `--order` | `-o` | Порядок: asc/desc | `-o asc` |
+| `--limit` | `-l` | Лимит записей | `-l 10` |
+| `--page` | `-p` | Фильтр по странице (часть URL) | `-p "rag-s-nulya"` |
 
 ### Типы группировки (`--by` / `-b`)
 
