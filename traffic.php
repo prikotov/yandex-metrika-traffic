@@ -153,10 +153,10 @@ if ($args['limit'] !== null) {
 }
 echo "\n";
 
-MetrikaClient::saveCsv($traffic, "$reportPath/traffic_$timestamp.csv");
-MetrikaClient::saveMarkdown($traffic, "$reportPath/traffic_$timestamp.md", $title, $args['dateFrom'], $args['dateTo']);
+MetrikaClient::saveCsv($traffic, "$reportPath/yandex_metrika_traffic_$timestamp.csv");
+MetrikaClient::saveMarkdown($traffic, "$reportPath/yandex_metrika_traffic_$timestamp.md", $title, $args['dateFrom'], $args['dateTo']);
 
 echo "  Создано файлов:\n";
-echo "    - traffic_$timestamp.csv\n";
-echo "    - traffic_$timestamp.md\n";
+echo "    - yandex_metrika_traffic_$timestamp.csv\n";
+echo "    - yandex_metrika_traffic_$timestamp.md\n";
 echo "\n  Найдено записей: " . count($traffic) . "\n";
