@@ -60,6 +60,7 @@ php .opencode/skills/yandex-metrika-traffic/traffic.php -p "blog/rag-s-nulya"
 
 | Параметр | Сокращение | Описание | Пример |
 |----------|------------|----------|--------|
+| `--site` | | Имя сайта из конфига | `--site task.ai-aid.pro` |
 | `--by` | `-b` | Группировка | `-b search_engine` |
 | `--sort` | `-s` | Поле сортировки | `-s bounce_rate` |
 | `--order` | `-o` | Порядок: asc/desc | `-o asc` |
