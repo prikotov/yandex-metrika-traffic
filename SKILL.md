@@ -66,7 +66,7 @@ php .opencode/skills/yandex-metrika-traffic/traffic.php -b search_engine -l 10 2
 
 ## Результат
 
-`metrika_reports/YYYY-MM-DD/`:
+`yandex_metrika_reports/YYYY-MM-DD/`:
 - `traffic_YYYY-MM-DD_HH-MM-SS.csv` / `.md` — данные о трафике
 
 ### Поля в отчете

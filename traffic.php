@@ -141,7 +141,7 @@ if ($args['page']) {
     $title .= " (страница: {$args['page']})";
 }
 
-echo "\n  Папка отчета: metrika_reports/" . basename($reportPath) . "\n";
+echo "\n  Папка отчета: yandex_metrika_reports/" . basename($reportPath) . "\n";
 echo "  Период: {$args['dateFrom']} — {$args['dateTo']}\n";
 echo "  Группировка: {$label}\n";
 echo "  Сортировка: {$args['sort']} ({$args['order']})\n";
